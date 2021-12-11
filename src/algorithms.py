@@ -2,6 +2,7 @@
 import time
 import globalVariables as gl
 import numpy as np
+import pandas as pd
 from matplotlib import pyplot as plt
 import seaborn as sns  # statistical plot
 from sklearn.linear_model import SGDClassifier
@@ -10,85 +11,140 @@ from sklearn.linear_model import LogisticRegression  # Logistic Regression
 from sklearn.neighbors import KNeighborsClassifier  # K Nearest Neighbors
 from sklearn.svm import SVC  # Support Vector Machines
 from sklearn.naive_bayes import GaussianNB  # Naive Bayes
-from sklearn import tree  # Decision Tree
+from sklearn.tree import DecisionTreeClassifier # Decision Tree
+from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 from sklearn.model_selection import cross_val_score, cross_val_predict, GridSearchCV, RandomizedSearchCV
 import warnings
-
 warnings.filterwarnings('ignore')
 
 
 def calculateStochasticGradientDescent(x_train, x_test, y_train, y_test):
-    sgd = SGDClassifier(loss="hinge", penalty="l2", max_iter=5)
-    sgd.fit(x_train, y_train)
-    y_predict = sgd.predict(x_test)
+    # Test Parameters to evaluate
+    testParameters = [{
+        "loss": ['hinge', 'log', 'modified_huber', 'squared_hinge', 'perceptron', 'squared_error', 'huber', 'epsilon_insensitive', 'squared_epsilon_insensitive'], 
+        "penalty": ['l2', 'l1', 'elasticnet'], "class_weight": ['balanced'], "l1_ratio": np.linspace(0, 1, num=10), "alpha": np.power(10, np.arange(-4, 1, dtype=float))         
+    }]
+    best_parameters = []
+    best_score = []
+    # Scaling the train sets 
+    scaler = StandardScaler().fit(x_train)
+    x_train_scaled = scaler.transform(x_train) 
+    x_test_scaled = scaler.transform(x_test) 
+    if gl.printing and gl.verboselevel > 1:
+        print("Stochastic Gradient Descent GridSeacrh on scaled an unscaled dataset")
+    for trainset in [x_train_scaled, x_train]:
+        sgd = SGDClassifier(random_state=True)
+        sgd_cv = GridSearchCV(sgd, testParameters, cv=gl.cv, verbose=gl.verboselevel, n_jobs=-1, scoring='accuracy')
+        sgd_cv.fit(trainset, y_train)
+                             
+        best_parameters.append(sgd_cv.best_params_)
+        best_score.append(sgd_cv.best_score_)
+        
+                             
+    if best_score[0] >= best_score[1]:
+        # Scaled Dataset
+        sgd = SGDClassifier(**best_parameters[0])
+        sgd.fit(x_train_scaled, y_train)
+        y_predict = sgd.predict(x_test_scaled)
+        print("Scaled Model has better accuracy of: ", best_score[0], " vs: ", best_score[1])
+        print("Best Parameters are: ", best_parameters[0])
+        scores = cross_val_score(estimator=sgd,
+                         X=x_test_scaled, y=y_test,
+                         cv=gl.cv, scoring='accuracy')
+    else:
+        # Non Scaled Dataset
+        sgd = SGDClassifier(**best_parameters[1])
+        sgd.fit(x_train, y_train)
+        y_predict = sgd.predict(x_test)
+        print("Non scaled Model has better accuracy of: ", best_score[1], " vs: ", best_score[0])
+        print("Best Parameters are: ", best_parameters[1])
+        scores = cross_val_score(estimator=sgd,
+                         X=x_test, y=y_test,
+                         cv=gl.cv, scoring='accuracy')
 
-    return getCompareParameters("Stochastic Gradient Descent", y_test, y_predict)
+    return getCompareParameters("Stochastic Gradient Descent", y_test, y_predict, scores)
 
 
 def calculateSupportVectorMachines(x_train, x_test, y_train, y_test):
-    # Todo use different kernels
-    support_vector_classifier = SVC(kernel="linear").fit(x_train, y_train)
-
-    # print(support_vector_classifier)
-
-    y_predict = support_vector_classifier.predict(x_test)
-
-    # Model Tuning & Validation
-    scores = cross_val_score(estimator=support_vector_classifier,
-                             X=x_train, y=y_train,
-                             cv=10, scoring='f1_macro')  # means we have a k-fold of 10
-    if gl.printing:
-        print("%0.2f accuracy with a standard deviation of %0.2f" % (scores.mean(), scores.std()))
-
-    # support_vector_classifier.predict(x_test)[:10]
-    # svm_params = {"C": np.arange(1, 20)}
-    #
-    # svm = SVC(kernel="linear")
-    # svm_cv = GridSearchCV(svm, svm_params, cv=8)
-    #
-    # start_time = time.time()
-    #
-    # svm_cv.fit(x_train, y_train)
-    #
-    # elapsed_time = time.time() - start_time
-    #
-    # svm_tuned = SVC(kernel="linear", C=2).fit(x_train, y_train)
-    #
-    # if gl.printing:
-    #     print(f"Elapsed time for Support Vector Regression cross validation: " f"{elapsed_time:.3f} seconds")
-    #     # best score
-    #     print(svm_cv.best_score_)
-    #     # best parameters
-    #     print(svm_cv.best_params_)
-    #     print(svm_tuned)
-    #
-    # y_predict = svm_tuned.predict(x_test)
-    # cm = confusion_matrix(y_test, y_predict)
-    #
-    # if gl.printing:
-    #     print(cm)
-    #     print("Our Accuracy is: ", (cm[0][0] + cm[1][1]) / (cm[0][0] + cm[1][1] + cm[0][1] + cm[1][0]))
-    #     print(accuracy_score(y_test, y_predict))
-    #     print(classification_report(y_test, y_predict))
-
-    return getCompareParameters("Support Vector Machines", y_test, y_predict)
+    # Test Parameters to evaluate
+    testParameters = [
+        {"kernel": ["linear"], "C": [0.9, 1, 2, 10], "class_weight": ['balanced']},
+        {"kernel": ["rbf"], "gamma": ['scale', 'auto'], "C": [0.9, 1, 2, 10], "class_weight": ['balanced']},
+        {"kernel": ["poly"], "gamma": ['scale'], "C": [0.9, 1, 2, 10], "degree": [2, 3, 4, 5, 6, 7 ,8] , "coef0": [0.0], "class_weight": ['balanced']},
+        {"kernel": ["sigmoid"], "gamma": ['scale', 'auto'], "C": [0.9, 1, 2, 10], "coef0": [0.0], "class_weight": ['balanced']},
+    ]
+    best_parameters = []
+    best_score = []
+    # Scaling the train sets 
+    scaler = StandardScaler().fit(x_train)
+    x_train_scaled = scaler.transform(x_train) 
+    x_test_scaled = scaler.transform(x_test) 
+    if gl.printing  and gl.verboselevel > 1:
+        print("Support Vector Machines GridSeacrh on scaled an unscaled dataset")
+    for trainset in [x_train_scaled, x_train]:
+        # Set the parameters by cross-validation
+        svm = SVC(cache_size=5000, probability=False)
+        svm_cv = GridSearchCV(svm, testParameters, scoring='accuracy', refit=False, cv=gl.cv, verbose=gl.verboselevel, n_jobs=-1) # TODO verbose level
+        svm_cv.fit(trainset, y_train)
+            
+        best_parameters.append(svm_cv.best_params_)
+        best_score.append(svm_cv.best_score_)
+        
+        
+    if best_score[0] >= best_score[1]:
+        # Scaled Dataset
+        svm = SVC(**best_parameters[0])
+        svm.fit(x_train_scaled, y_train)
+        y_predict = svm.predict(x_test_scaled)
+        print("Scaled Model has better accuracy of: ", best_score[0], " vs: ", best_score[1])
+        print("Best Parameters are: ", best_parameters[0])
+        scores = cross_val_score(estimator=svm,
+                         X=x_test_scaled, y=y_test,
+                         cv=gl.cv, scoring='accuracy')
+    else:
+        # Non Scaled Dataset
+        svm = SVC(**best_parameters[1])
+        svm.fit(x_train, y_train)
+        y_predict = svm.predict(x_test)
+        print("Non scaled Model has better accuracy of: ", best_score[1], " vs: ", best_score[0])
+        print("Best Parameters are: ", best_parameters[1])
+        scores = cross_val_score(estimator=svm,
+                         X=x_test, y=y_test,
+                         cv=gl.cv, scoring='accuracy')
+   
+    return getCompareParameters("Support Vector Machines", y_test, y_predict, scores)
 
 
 def calculateNaiveBayes(x_train, x_test, y_train, y_test):
     model = GaussianNB()
     model.fit(x_train, y_train)
-    y_predict = model.predict(x_test)  # estimated targets as returned by the classifier
+    y_predict = model.predict(x_test)
+    scores = cross_val_score(estimator=model,
+                         X=x_test, y=y_test,
+                         cv=gl.cv, scoring='accuracy') 
 
-    return getCompareParameters("Naive Bayes", y_test, y_predict)
+    return getCompareParameters("Naive Bayes", y_test, y_predict, scores)
 
 
 def calculateDecisionTrees(x_train, x_test, y_train, y_test):
-    model = tree.DecisionTreeClassifier()
-    model.fit(x_train, y_train)
-    y_predict = model.predict(x_test)  # estimated targets as returned by the classifier
+    # Test Parameters to evaluate
+    testParameters = [
+        {"criterion": ['gini', 'entropy'], "splitter": ['best', 'random']}
+    ]
+    dt = DecisionTreeClassifier()
+    dt_cv = GridSearchCV(dt, testParameters, scoring='accuracy', cv=gl.cv, verbose=gl.verboselevel, n_jobs=-1)
+    dt_cv.fit(x_train, y_train)
+    # Use the best parameters
+    print("Best Parameters are: ", dt_cv.best_params_)
+    dt = DecisionTreeClassifier(**dt_cv.best_params_)
+    dt.fit(x_train, y_train)
+    y_predict = dt.predict(x_test) # estimated targets as returned by the classifier
+    scores = cross_val_score(estimator=dt,
+                     X=x_test, y=y_test,
+                     cv=gl.cv, scoring='accuracy')                       
 
-    return getCompareParameters("Decision Trees", y_test, y_predict)
+    return getCompareParameters("Decision Trees", y_test, y_predict, scores)
 
 
 def calculateLogisticRegression(x_train, x_test, y_train, y_test):
@@ -110,7 +166,7 @@ def calculateLogisticRegression(x_train, x_test, y_train, y_test):
 
     # Create randomized search 10-fold cross validation and 1000 iterations
     cv = 10
-    SearchCV_Output = RandomizedSearchCV(model, hyperparameters, random_state=1, n_iter=1000, cv=cv, verbose=0,
+    SearchCV_Output = RandomizedSearchCV(model, hyperparameters, random_state=1, n_iter=1000, cv=gl.cv, verbose=gl.verboselevel,
                                          n_jobs=-1)
     # Fit randomized search
     best_model = SearchCV_Output.fit(x_train, y_train)
@@ -119,13 +175,18 @@ def calculateLogisticRegression(x_train, x_test, y_train, y_test):
     # Normal Fitter
     model.fit(x_train, y_train)
     y_predict = model.predict(x_test)
+    scores = cross_val_score(estimator=best_model,
+                     X=x_test, y=y_test,
+                     cv=gl.cv, scoring='accuracy')  
     if gl.printing:
         print("Best Output Score: ", best_model.best_score_, " using Parameters: ", best_model.best_params_)
         print('The accuracy of the Logistic Regression Manually set is', metrics.accuracy_score(prediction_man, y_test))
         print('The accuracy of the Logistic Regression Automatically set is',
               metrics.accuracy_score(y_predict, y_test))
-
-    return getCompareParameters("Logistic Regression", y_test, y_predict)
+              
+    # TODO add scores
+              
+    return getCompareParameters("Logistic Regression", y_test, y_predict, scores)
 
 
 def calculateKNearestNeighbors(x_train, x_test, y_train, y_test):
@@ -152,7 +213,7 @@ def calculateKNearestNeighbors(x_train, x_test, y_train, y_test):
     param_grid = dict(n_neighbors=neighbors)
 
     # Create randomized search 10-fold cross validation and 100 iterations
-    KNN_GridSearch = GridSearchCV(model_KNN, param_grid, cv=cv, n_jobs=-1)
+    KNN_GridSearch = GridSearchCV(model_KNN, param_grid, cv=gl.cv, n_jobs=-1, verbose=gl.verboselevel)
 
     # Fit randomized search
     KNN_best_model = KNN_GridSearch.fit(x_train, y_train)
@@ -213,11 +274,17 @@ def calculateKNearestNeighbors(x_train, x_test, y_train, y_test):
 
         filePathName = gl.plotFilePath + "KNN_Results" + gl.fileFormat
         gl.savePlots(filePathName, plt)
+        
+    scores = cross_val_score(estimator=model_KNN,
+                     X=x_test, y=y_test,
+                     cv=gl.cv, scoring='accuracy')      
 
-    return getCompareParameters("K Nearest Neighbors", y_test, y_predict)
+    return getCompareParameters("K Nearest Neighbors", y_test, y_predict, scores)
 
+def mean(list):
+    return sum(list) / len(list)
 
-def getCompareParameters(name, y_test, y_predict) -> object:
+def getCompareParameters(name, y_test, y_predict, scores) -> object:
     confusion = metrics.confusion_matrix(y_test, y_predict)
 
     # extract values from matrix
@@ -227,9 +294,7 @@ def getCompareParameters(name, y_test, y_predict) -> object:
     fn = confusion[1, 0]  # false negative
 
     # model evaluation
-    accuracy = (tp + tn) / (tp + tn + fp + fn)
-    precision = tp / (tp + fp)
-    recall = tp / (tp + fn)
+    #accuracy = (tp + tn) / (tp + tn + fp + fn)
     f1 = metrics.f1_score(y_test, y_predict)
     specificity = tn / (tn + fp)
     sensitivity = tp / (tp + fn)
@@ -245,11 +310,9 @@ def getCompareParameters(name, y_test, y_predict) -> object:
 
     if gl.printing:
         print(name, ' MODEL EVALUATION')
-        print('Accuracy : ', accuracy)
-        print('Precision : ', precision)
-        print('Recall : ', recall)
+        print('Accuracy : ', mean(scores))
         print('F1 : ', f1)
         print('Specificity : ', specificity)
         print('Sensitivity : ', sensitivity, '\n\n')
 
-    return name, accuracy, f1, specificity, sensitivity
+    return name, mean(scores), f1, specificity, sensitivity, scores

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 global filePath
 global fileDelimiter
 global logFilePath
@@ -12,17 +11,27 @@ global printToFile
 global testSize
 global randomState
 
-# User variables to modify
-filePath = "../data/diabetes.csv"  # DataSet
-fileDelimiter = ","  # DataSet Delimiter
-logFilePath = "../output/output.txt"  # Logfile Path
-plotFilePath = "../output/"  # File Path for plots
-fileFormat = ".pdf"  # File format of the plots
-savePlots = True  # If True save the plots to files
-printing = True  # If True print files (either to console or to files)
-printToFile = True  # If true redirect stdout to logFilePath  (printing needs to be true as well to work)
-testSize = 0.30  # STILL TO DECIDE
-randomState = 1  # STILL TO DECIDE
+# Changable parameters for entire project
+testSize = 0.25                         # Using 0.xx of the dataset for testing
+randomState = 42                        # Random Seed
+cv = 10                                 # Cross Validation amunt of foldings
+quickRun = True                         # SVMs only run scaled dataset -> way faster
+verboselevel = 0                        # how much output for gridsearch 0 -> none 4 -> max
+filePath = "../data/diabetes.csv"       # DataSet path
+fileDelimiter = ","                     # DataSet delimiter
+logFilePath = "../output/output.txt"    # Logfile path
+plotFilePath = "../output/"             # Otuput folder for plots and logfile
+fileFormat = ".pdf"                     # File format of the plots
+savePlots = True                        # If True save the plots to files
+printing = True                         # If True print files (either to console or to files)
+printToFile = False                     # If True redirect stdout to logFilePath  (printing needs to be true as well to work)
+testSize = 0.25                         # Using 0.xx of the dataset for testing
+randomState = 42                        # Random Seed
+cv = 5                                  # Cross validation amunt of foldings
+verboselevel = 0                        # Verbosity output for gridsearch 0 -> none 4 -> max
+
+# TODO remove this
+latexOutput = False                     # Latex output for documentation (printing needs to be true as well to work)
 
 
 # Results class for storing the results to compare
@@ -33,7 +42,7 @@ class Results(object):
         self.f1 = f1_
         self.specificity = specificity_
         self.sensitivity = sensitivity_
-
+        
 
 def savePlots(path, plot):
     plot.savefig(path, bbox_inches="tight", pad_inches=0.3, transparent=False, dpi=600)
