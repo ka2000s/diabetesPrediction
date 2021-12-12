@@ -36,14 +36,13 @@ The file globalVariables.py allows to change parameters for the entire project, 
 filePath = "../data/diabetes.csv"       # DataSet path
 fileDelimiter = ","                     # DataSet delimiter
 logFilePath = "../output/output.txt"    # Logfile path
-plotFilePath = "../output/"             # Otuput folder for plots and logfile
+plotFilePath = "../output/"             # Output folder for plots and logfile
 fileFormat = ".pdf"                     # File format of the plots
 savePlots = True                        # If True save the plots to files
-printing = True                         # If True print files (either to console or to files)
-printToFile = False                     # If True redirect stdout to logFilePath  (printing needs to be true as well to work)
+printToFile = False                     # If True redirect stdout to logFilePath
 testSize = 0.25                         # Using 0.xx of the dataset for testing
 randomState = 42                        # Random Seed
-cv = 10                                 # Cross validation amunt of foldings
+cv = 5                                  # Cross validation amount of folding
 verboselevel = 0                        # Verbosity output for gridsearch 0 -> none 4 -> max
 ```
 

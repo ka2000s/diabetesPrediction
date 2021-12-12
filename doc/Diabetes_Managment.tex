@@ -123,10 +123,9 @@
 	Classification algorithms need to be evaluated with evaluation metrics. The resulting accuracy gives a good appreciation of the algorithm and helps to detect which one suits best for a medical application. In this paper, the Pima Indian Diabetes Database \cite{Pima} is prepared and applied to classification algorithms such as Logistic Regression, Naïve Bayes, Stochastic Gradient Descent, K-Nearest Neighbors, Decision Tree, and Support Vector Machine. All algorithms will be reviewed. Finally, a comparison between all algorithms’ evaluation metrics will be evaluated.
 	
 	\section{Related work}
-	\cite{MUJUMDAR2019292}
-	DB
+	There is currently considerably research being done on diabetes prediction with machine learning algorithms. This paper compares the six most common and traditional machine learning methods. However, more algorithms and methods are being developed to help predict diabetes. For instance, \citeauthor{POLAT2007702} \cite{POLAT2007702} use a principal component analysis (PCA) and neuro fuzzy inference. Other studies use ensemble methods to improve the accuracy of their results. \citeauthor{OZCIFT2011443} \cite{OZCIFT2011443} proposed an ensemble approach called rotation forest. It combines 30 machine learning methods. A quantum particle swarm optimization (QPSO) algorithm and weighted least squares support vector machine (WLS-SVM) was introduced by \citeauthor{Chen} to predict diabetes type 2. \citeauthor{Duygu} \cite{Duygu} proposed a new system called LDA-MWSVM. This system used Linear Discriminant Analysis (LDA) to reduce the dimensions and extract the features. To deal with the high dimensional datasets, \citeauthor{Razavian} \cite{Razavian} built prediction models based on logistic regression for different onsets of type 2 diabetes prediction. \citeauthor{Georga} \cite{Georga} focused on glucose and used support vector regression (SVR) to predict diabetes, which is a multivariate regression problem. \hl{SOME FINAL SENTENCE HERE???}
+
 	\section{Methods}
-	\hl{filler text here}
 	\subsection{Programming Language and used packages}
 		This project is coded with Python version 3.9.9. the used packages can be seen in table \ref{tab:Python}.
 	\begin{table}[H]
@@ -158,7 +157,7 @@
 	The chosen model is the DecisionTreeClassifier. All default parameters are kept as so.
 	The generation of the evaluation metrics gives an accuracy of [put result].
 	
-	\hl{Best Parameters are:  criterion: gini, splitter: best}
+	\hl{Best Parameters are:  criterion: gini, splitter: best, max\_feature: log2, class weight balanced}
 
 	
 	% K-Nearest Neighbours
@@ -190,29 +189,30 @@
 	An advantage of SVMs is that it is effective in high dimensional spaces, even in cases where the number of dimensions is greater than the number of samples. SVMs are also memory efficient because they use a subset of training points in the decision function (called support vectors). Another advantage is that SVMs is versatile in which different Kernel functions can be specified for the decision function.
 	One disadvantage of SVMs is that if the number of features is much greater than the number of samples, the choice of Kernel functions and the regularization term become crucial to avoid overfitting. Another drawback is that SVMs do not directly provide probability estimates; these are calculated using time expensive k-fold cross-validation.
 	\medbreak
-	In the SVMs model we can chose between the following four kernel functions, the figure \ref{fig:svms} illustrates the differences between the kernels.
-	
-	\begin{minipage}[b]{0.5\linewidth}
-		\begin{table}[H]
-			\begin{tabularx}{\textwidth}{lX}
-				Linear & $\left\langle x, x^{\prime}\right\rangle$\\
-				Rbf &  $\exp \left(-\gamma\left\|x-x^{\prime}\right\|^{2}\right)$, where $\gamma$ is specified by parameter gamma \\
-				Polynomial & $ \left(\gamma\left\langle x, x^{\prime}\right\rangle+r\right)^{d}$, where $d$ is specified by parameter degree, $r$ by coefo  \\
-				Sigmoid & $\tanh \left(\gamma\left\langle x, x^{\prime}\right\rangle+r\right)$, where $r$ is specified by coefo \\
-			\end{tabularx}
-			\caption{Support Vector Machines Kernels}
-			\label{tab:svmsKernels}
-		\end{table}
-	\end{minipage}
-	\begin{minipage}[b]{0.5\linewidth}
-			\begin{figure}[H]
-			\centering
-			\includegraphics[width=0.8\textwidth]{img/svms}
-			\caption{Support Vector Machines Kernels \cite{scikit}}
-			\label{fig:svms}
-		\end{figure}
-	\end{minipage}
-	For this model the test and train data will be tested scaled and non scaled, this means training an SVMs over the scaled and non-scaled data leads to the generation of different models. To tune the SVMs model the following parameters where tested with a grid search and cross validation with 5 time folding. The underlined parameters are the best-performing ones, and we used them in this project. The scaled test dataset was used, because it scored a higher accuracy. The best parameters can vary for every run of the source code.
+%	\hl{remove if to many pages}
+%	In the SVMs model we can chose between the following four kernel functions, the figure \ref{fig:svms} illustrates the differences between the kernels.
+%	
+%	\begin{minipage}[b]{0.5\linewidth}
+%		\begin{table}[H]
+%			\begin{tabularx}{\textwidth}{lX}
+%				Linear & $\left\langle x, x^{\prime}\right\rangle$\\
+%				Rbf &  $\exp \left(-\gamma\left\|x-x^{\prime}\right\|^{2}\right)$, where $\gamma$ is specified by parameter gamma \\
+%				Polynomial & $ \left(\gamma\left\langle x, x^{\prime}\right\rangle+r\right)^{d}$, where $d$ is specified by parameter degree, $r$ by coefo  \\
+%				Sigmoid & $\tanh \left(\gamma\left\langle x, x^{\prime}\right\rangle+r\right)$, where $r$ is specified by coefo \\
+%			\end{tabularx}
+%			\caption{Support Vector Machines Kernels}
+%			\label{tab:svmsKernels}
+%		\end{table}
+%	\end{minipage}
+%	\begin{minipage}[b]{0.5\linewidth}
+%			\begin{figure}[H]
+%			\centering
+%			\includegraphics[width=0.8\textwidth]{img/svms}
+%			\caption{Support Vector Machines Kernels \cite{scikit}}
+%			\label{fig:svms}
+%		\end{figure}
+%	\end{minipage}
+	For this model the dataset will be tested scaled and non scaled, this means training an SVMs over the scaled and non-scaled data leads to the generation of different models. To tune the SVMs model the following parameters where tested with a grid search and cross validation with 5 time folding. The underlined parameters are the best-performing ones, and we used them in this project. The scaled test dataset was used, because it scored a higher accuracy. The best parameters can vary for every run of the source code.
 	\begin{table}[H]
 		\renewcommand{\arraystretch}{1.3}
 		\centering
@@ -250,6 +250,7 @@
 		\label{tab:SGDParameters}
 	\end{table}
 
+
 %	\begin{figure}[H]
 %		\centering
 %		\includegraphics[width=0.8\textwidth]{img/sgd}
@@ -258,10 +259,21 @@
 %	\end{figure}
 	
 	\subsection{Cross Validation}
-	Alli algorithm sind mit cross validation tested worda, k-fold = 5 -< meh got z lang und brint nid viel
-	\hl{Burd TODO}
-	Grid search for SVM, KNN and random search for the rest.
-	
+	All machine learning algorithms must first be trained and then tested with a data set afterwards. Since the same data set is used to train and test the models, we applied the cross-validation technique to resample the data accordingly. This means that different portions of the data are used to train and then test the models with each iteration. We used fivefold cross-validation for our algorithms. The principle of data resampling can be seen in Figure \ref{fig:crossValidation}. We chose five as more iterations only slow down the overall code speed and does not significantly impact the results.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.5\textwidth]{img/grid_search_cross_validation.png}
+		\caption{Fivefold Cross Validation to resample the dataset \cite{scikit}}
+		\label{fig:crossValidation}
+	\end{figure}
+	\subsection{Tuning Algorithms}
+	The final accuracy score of the algorithms can be fined tuned by changing and adapting its parameters. Some parameters can be learned automatically, but hyper-parameters must be set manually. Setting the hyper-parameters is usually not clear and has to be searched with different methods. The algorithms SGD, SVMs, Decision Tree and KNN use the Grid Search, and the Random Search method is used for Logistic Regression. In Figure \ref{fig:tuningAlgos} the hyper-parameters and parameters are represented as dots, and the green curve above displays its respective model accuracy. The grid search is labelled as (a) and the Random Search as (b). The Random Search defines a search space as a bounded domain of hyperparameter values and randomly samples points in that domain. It has greater variability, and therefore changes in the hyperparameter can have a greater influence on the model tuning. On the other hand, the grid search defines a search space as a grid of hyperparameter values and evaluates every position in the grid.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.5\textwidth]{img/gridsearchAndRandomsearch}
+		\caption{Comparison between (a) Grid Search and (b) Random Search. Changing hyper-parameters has an influence on the model accuracy \cite{Pilario}}
+		\label{fig:tuningAlgos}
+	\end{figure}
 	\subsection{Model Comparisons}
 	To compare the models against each other, the best parameters are automatically chosen, and with them, another cross-validation with 5 times folding is done.
 	The accuracy of all models is then used to create a boxplot, which allows us to compare the model against each other quickly. The accuracy only demonstrates to us a small part of the performance of a model. Therefore also the Specificity, Sensitivity and the F1 value are evaluated. Following the equations to get these values.
@@ -324,7 +336,7 @@
 				node distance = 0.5cm,
 				]
 				%Nodes
-				\node[squarednode](read){read dataset};
+				\node[squarednode](read){Read Dataset};
 				\node[squarednode2](step0)[below=of read]{Import packages};
 				\node[squarednode2](step1)[below=of step0]{Import data};
 				\node[squarednode2](step2)[below=of step1]{Display data};
@@ -351,7 +363,7 @@
 				node distance = 0.5cm,
 				]
 				%Nodes
-				\node[squarednode](read){EDA};
+				\node[squarednode](read){Exploratory Data Analysis (EDA)};
 				\node[squarednode2](step0)[below=of read]{Count missing values (zeros)};
 				\node[squarednode2](step1)[below=of step0]{Replace missing values with "NaN"};
 				\node[squarednode2](step2)[below=of step1]{Visualize the distribution of data for all variables};
@@ -382,7 +394,7 @@
 	By looking at the data in table \ref{tab:nullValues}, it is easy to see that some "0" values do not make sense. For example, a value of zero in the BMI or in the Blood pressure variable would indicate that the patient is not existing or dead. The replacement of the zero values is made by first analyzing the distribution of the data. If the distribution is symmetric, the missing values are replaced with the mean value. If the distribution shows a lot of outliners, the missing values are replaced by the median value. The distribution and box plots are generated (see figure \ref{fig:distributionBoxplot}) to permit the decision. Once the missing values are replaces, those figures are re-generated to assure a similar distribution as before the cleaning. Table \ref{tab:nullValues} shows the amount of the "0" values and how they were handled.
 
 	\begin{table}[H]
-		\renewcommand{\arraystretch}{1.3}
+		%\renewcommand{\arraystretch}{1.3}
 		\centering
 		\begin{tabular}{lcc}
 			Data column & Amount of "0" values & Chosen replacement method \\
@@ -395,7 +407,6 @@
 			BMI (Body Mass Index) &        11 & Median \\
 			Diabetes Pedigree Function  &    0 & None \\
 			Age                  &         0 & None \\
-			Outcome              &         0 & None \\
 		\end{tabular}
 		\caption{Amount of zero values in dataset}
 		\label{tab:nullValues}
@@ -405,23 +416,24 @@
 	\medbreak
 	Both sets will be further split into an x-set and a y-set, where the y-set contains the outcome, if a person has diabetes or not (True or False), the x set contains all measured patient data. If the model is fitted with the training set, the test set will evaluate the model performance.
 	% Data Scaling / Feature Scaling
-	\subsubsection{Data Scaling / Feature Scaling}
-	Data scaling or feature scaling is used in some machine learning algorithms. If there is a vast difference between numbers sizes, the model could assume that bigger numbers are more significant than smaller ones. Therefore all values are normalized or standardized.
-	\medbreak
-	In our case, data scaling was used for the SVMs and SGD \hl{more? dani?} algorithms, in both cases, the scaled data had better accuracy than the non-scaled data. Data scaling also helps some models (for example, SGD) with the training time, significantly improving the converge time.
+%	\subsubsection{Data Scaling / Feature Scaling}
+%	\hl{To basic I gues remove it? we have to many pages}
+%	Data scaling or feature scaling is used in some machine learning algorithms. If there is a vast difference between numbers sizes, the model could assume that bigger numbers are more significant than smaller ones. Therefore all values are normalized or standardized.
+%	\medbreak
+%	In our case, data scaling was used for the SGD, SVMs and KNN algorithms, in all cases, the scaled data had better accuracy than the non-scaled data. Data scaling also helps some models (for example, SGD) with the training time, significantly improving the converge time.
 	
 	% Imbalanced Data
  	\subsubsection{Imbalanced Data}
  	The Pima Indians Diabetes Database \cite{Pima} is quite imbalanced. This can be seen in figure \ref{fig:outcome}, the outcome has way more non-diabetes patients (diabetes:  34.9\%, No diabetes: 65.1\%) than patients with diabetes. Some algorithms have problems with imbalanced data, for example, the SVMs algorithm. Suppose the imbalanced data are not handled in the SVMs algorithm. It will predict every patient as a non-diabetes patient and, therefore, have a pretty good accuracy because 65.1\% of the patients are non-diabetic. This gives us a specificity of 100\% and a sensitivity of 0\%. Therefore, the model is useless. The imbalanced data need to be checked and handled if the algorithm requires it.
 	
 	\begin{figure}[H]
-		\begin{minipage}[b]{0.7\textwidth}
+		\begin{minipage}[b]{0.65\textwidth}
 			\centering
 			\includegraphics[width=\textwidth]{img/dataset_distibutionAndBoxPlot.pdf}
 			\caption{Dataset distribution and boxplots}
 			\label{fig:distributionBoxplot}
 		\end{minipage}
-		\begin{minipage}[b]{0.3\textwidth}
+		\begin{minipage}[b]{0.35\textwidth}
 			\centering
 			\includegraphics[width=\textwidth]{img/dataset_diabetes_and_non_diabetes.pdf}
 			\caption{Dataset Outcome}
@@ -431,33 +443,38 @@
 
 	%% RESULTS
 	\section{Results}
-		\hl{TODO real output}
-		\begin{table}[H]
-			\renewcommand{\arraystretch}{1.3}
-			\begin{tabularx}{\linewidth}{lXXXX}
-				Model & Accuracy & Specificity & Sensitivity & F1 \\
-				\toprule
-				Stochastic Gradient Descent  &  0.670996  &  0.931507  &  0.223529  &  0.333333  \\
-				Support Vector Machines  &  0.774892  &  0.897260  &  0.564706  &  0.648649  \\
-				Naive Bayes  &  0.770563  &  0.842466  &  0.647059  &  0.674847  \\
-				Decision Trees  &  0.727273  &  0.815068  &  0.576471  &  0.608696  \\
-				Logistic Regression  &  0.779221  &  0.897260  &  0.576471  &  0.657718  \\
-				K Nearest Neighbors  &  0.779221  &  0.863014  &  0.635294  &  0.679245  \\
-			\end{tabularx}
-			\caption{Model comparison results}
-			\label{fig:results}
-		\end{table}
-		\hl{todo text}
-		\begin{figure}[H]
-			\centering
-			\includegraphics[width=0.9\textwidth]{img/model_comparision.pdf}
-			\caption{Model Comparison}	
-		\end{figure}
+	We applied the mentioned machine learning algorithms and got the performance results in the table \ref{fig:results}, and for the accuracy and f1 score, boxplots were made, see figure \ref{fig:modelComparision}.
+
+	\begin{table}[H]
+		\renewcommand{\arraystretch}{1.3}
+		\begin{tabularx}{\linewidth}{lXXXX}
+			Model & Accuracy & Specificity & Sensitivity & F1 \\
+			\toprule
+			Decision Trees  &  0.708502  &  0.715447  &  0.608696  &  0.570121  \\
+			K Nearest Neighbors  &  0.740216  &  0.861789  &  0.565217  &  0.619996  \\
+			Logistic Regression  &  0.765992  &  0.853659  &  0.565217  &  0.614503  \\
+			Naive Bayes  &  0.729555  &  0.772358  &  0.666667  &  0.619294  \\
+			Support Vector Machines  &  0.718489  &  0.617886  &  0.724638  &  0.625714  \\
+			Stochastic Gradient Descent  &  0.745344  &  0.569106  &  0.869565  &  0.493682  \\
+		\end{tabularx}
+		\caption{Model Performance Results}
+		\label{fig:results}
+	\end{table}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.8\textwidth]{img/model_comparision.pdf}
+		\caption{Model Comparison}	
+		\label{fig:modelComparision}
+	\end{figure}
+	The overall best model is the one with the Logistic Regression algorithm.
+
 
 	%% DISCUSSION
 	\section{Discussion}
 	Diabetes is a well-knows chronic metabolic disease that results from defects in insulin secretion, insulin action, or both. The long-term complications related to diabetes could be critical. To avoid dramatic situations, the diagnosis of diabetes should be made as early as possible. To this day, Prediction Analysis as been used to assist medical decision-making. What differs between each algorithm used to predict disease such as diabetes is the accuracy find in the evaluation metrics. By evaluating the accuracy of multiple algorithms, one can find the one that suits the most in a medical application such as diabetes diagnosis. In order to do this comparison, the Pima Indian Diabetes Database is prepared and applied to classification algorithms such as Logistic Regression, Naïve Bayes, Stochastic Gradient Descent, K-Nearest Neighbors, Decision Tree, and Support Vector Machine. The result shows that the best accuracy is reached with \hl{[???????]} with an accuracy of \hl{[???????]}. The result is explained by a good ratio of number of correct predictions to the total number of input samples. The database includes only woman and is therefore limited to female diagnosis only. Future work could include a study of male-diagnosed patient to develop a more inclusive diagnosis method.
 
 	\hl{TODO -> a ccuracy of arounf 77\% is really bad not? its a bit better than guessing, shall we write something about that? WHO criteria of $\geq$80\% sensitivity and $\geq$97\% specificity -> example requirments who coivd tests}
+	
+
 \printbibliography
 \end{document}
