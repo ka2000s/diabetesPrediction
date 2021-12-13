@@ -5,6 +5,7 @@ import globalVariables as gl
 from matplotlib import pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 sns.set(color_codes=True)
 
 
@@ -91,4 +92,11 @@ def readAndCleanDataSet():
 def prepareTrainingData(data):
     x = data.drop('Outcome', axis=1)
     y = data['Outcome']
-    return train_test_split(x, y, test_size=gl.testSize, shuffle=True, random_state=gl.randomState)
+    Std_scaler = StandardScaler()
+    x_scaled = Std_scaler.fit_transform(x)
+    [x_train_scaled, x_test_scaled, y_train, y_test] = train_test_split(x_scaled, y, test_size=gl.testSize,
+                                                                        shuffle=True, random_state=gl.randomState)
+    [x_train, x_test, y_train, y_test] = train_test_split(x, y, test_size=gl.testSize, shuffle=True,
+                                                          random_state=gl.randomState)
+    
+    return x_train, x_train_scaled, x_test, x_test_scaled, y_train, y_test

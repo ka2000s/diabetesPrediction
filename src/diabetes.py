@@ -19,7 +19,7 @@ if gl.printToFile:
 # Get the Clean Dataset
 data = readAndCleanDataSet()
 # Prepare Dataset for training
-[x_train, x_test, y_train, y_test] = prepareTrainingData(data)
+[x_train, x_train_scaled, x_test, x_test_scaled, y_train, y_test] = prepareTrainingData(data)
 
 # Calculate all 6 Algorithms
 results = []
@@ -28,42 +28,42 @@ f1s = []
 names = []
 # Stochastic Gradient Descent -> SGD
 name, accuracy, f1, specificity, sensitivity, accuracyScores, f1Scores = \
-    calculateStochasticGradientDescent(x_train, x_test, y_train, y_test)
+    calculateStochasticGradientDescent(x_train, x_train_scaled, x_test, x_test_scaled, y_train, y_test)
 accuracies.append(accuracyScores)
 f1s.append(f1Scores)
 names.append(name)
 results.append(gl.Results(name, accuracy, f1, specificity, sensitivity))
 # Support Vector Machines -> SVM
 name, accuracy, f1, specificity, sensitivity, accuracyScores, f1Scores = \
-    calculateSupportVectorMachines(x_train, x_test, y_train, y_test)
+    calculateSupportVectorMachines(x_train, x_train_scaled, x_test, x_test_scaled, y_train, y_test)
 accuracies.append(accuracyScores)
 f1s.append(f1Scores)
 names.append(name)
 results.append(gl.Results(name, accuracy, f1, specificity, sensitivity))
 # Naive Bayes -> NB
 name, accuracy, f1, specificity, sensitivity, accuracyScores, f1Scores = \
-    calculateNaiveBayes(x_train, x_test, y_train, y_test)
+    calculateNaiveBayes(x_train, x_train_scaled, x_test, x_test_scaled, y_train, y_test)
 accuracies.append(accuracyScores)
 f1s.append(f1Scores)
 names.append(name)
 results.append(gl.Results(name, accuracy, f1, specificity, sensitivity))
 # Decision Trees -> DT
 name, accuracy, f1, specificity, sensitivity, accuracyScores, f1Scores = \
-    calculateDecisionTrees(x_train, x_test, y_train, y_test)
+    calculateDecisionTrees(x_train, x_train_scaled, x_test, x_test_scaled, y_train, y_test)
 accuracies.append(accuracyScores)
 f1s.append(f1Scores)
 names.append(name)
 results.append(gl.Results(name, accuracy, f1, specificity, sensitivity))
 # Logistic Regression -> LR
 name, accuracy, f1, specificity, sensitivity, accuracyScores, f1Scores = \
-    calculateLogisticRegression(x_train, x_test, y_train, y_test)
+    calculateLogisticRegression(x_train, x_train_scaled, x_test, x_test_scaled, y_train, y_test)
 accuracies.append(accuracyScores)
 f1s.append(f1Scores)
 names.append(name)
 results.append(gl.Results(name, accuracy, f1, specificity, sensitivity))
 # K Nearest Neighbors -> KNN
 name, accuracy, f1, specificity, sensitivity, accuracyScores, f1Scores = \
-    calculateKNearestNeighbors(x_train, x_test, y_train, y_test)
+    calculateKNearestNeighbors(x_train, x_train_scaled, x_test, x_test_scaled, y_train, y_test)
 accuracies.append(accuracyScores)
 f1s.append(f1Scores)
 names.append(name)
@@ -82,6 +82,6 @@ if gl.savePlots:
     sns.boxplot(data=df, orient='v', ax=axes[0])
     df = pd.DataFrame.from_dict(dict(zip(names, f1s)))
     sns.boxplot(data=df, orient='v', ax=axes[1])
-    filePathName = gl.plotFilePath + "model_comparision" + gl.fileFormat
+    filePathName = gl.plotFilePath + "model_comparison" + gl.fileFormat
     gl.savePlots(filePathName, plt)
     

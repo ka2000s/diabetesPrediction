@@ -123,7 +123,7 @@
 	Classification algorithms need to be evaluated with evaluation metrics. The resulting accuracy gives a good appreciation of the algorithm and helps to detect which one suits best for a medical application. In this paper, the Pima Indian Diabetes Database \cite{Pima} is prepared and applied to classification algorithms such as Logistic Regression, Naïve Bayes, Stochastic Gradient Descent, K-Nearest Neighbors, Decision Tree, and Support Vector Machine. All algorithms will be reviewed. Finally, a comparison between all algorithms’ evaluation metrics will be evaluated.
 	
 	\section{Related work}
-	There is currently considerably research being done on diabetes prediction with machine learning algorithms. This paper compares the six most common and traditional machine learning methods. However, more algorithms and methods are being developed to help predict diabetes. For instance, \citeauthor{POLAT2007702} \cite{POLAT2007702} use a principal component analysis (PCA) and neuro fuzzy inference. Other studies use ensemble methods to improve the accuracy of their results. \citeauthor{OZCIFT2011443} \cite{OZCIFT2011443} proposed an ensemble approach called rotation forest. It combines 30 machine learning methods. A quantum particle swarm optimization (QPSO) algorithm and weighted least squares support vector machine (WLS-SVM) was introduced by \citeauthor{Chen} to predict diabetes type 2. \citeauthor{Duygu} \cite{Duygu} proposed a new system called LDA-MWSVM. This system used Linear Discriminant Analysis (LDA) to reduce the dimensions and extract the features. To deal with the high dimensional datasets, \citeauthor{Razavian} \cite{Razavian} built prediction models based on logistic regression for different onsets of type 2 diabetes prediction. \citeauthor{Georga} \cite{Georga} focused on glucose and used support vector regression (SVR) to predict diabetes, which is a multivariate regression problem. \hl{SOME FINAL SENTENCE HERE???}
+	There is currently considerably research being done on diabetes prediction with machine learning algorithms. This paper compares the six most common and traditional machine learning methods. However, more algorithms and methods are being developed to help predict diabetes. For instance, \citeauthor{POLAT2007702} \cite{POLAT2007702} use a principal component analysis (PCA) and neuro fuzzy inference. Other studies use ensemble methods to improve the accuracy of their results. \citeauthor{OZCIFT2011443} \cite{OZCIFT2011443} proposed an ensemble approach called rotation forest. It combines 30 machine learning methods. A quantum particle swarm optimization (QPSO) algorithm and weighted least squares support vector machine (WLS-SVM) was introduced by \citeauthor{Chen} to predict diabetes type 2. \citeauthor{Duygu} \cite{Duygu} proposed a new system called LDA-MWSVM. This system used Linear Discriminant Analysis (LDA) to reduce the dimensions and extract the features. To deal with the high dimensional datasets, \citeauthor{Razavian} \cite{Razavian} built prediction models based on logistic regression for different onsets of type 2 diabetes prediction. \citeauthor{Georga} \cite{Georga} focused on glucose and used support vector regression (SVR) to predict diabetes, which is a multivariate regression problem.
 
 	\section{Methods}
 	\subsection{Programming Language and used packages}
@@ -162,16 +162,12 @@
 	
 	% K-Nearest Neighbours
 	\subsection{K-Nearest Neighbours}
-	\hl{Standarization needed!}
-	Supervised neighbors-based learning comes in two flavors: classification for data with discrete labels, and regression for data with continuous labels. The principle behind nearest neighbor methods is to find a predefined number of training samples closest in distance to the new point, and predict the label from these. The k-factor is the number of samples/neighbours. It can be defined by the user. Being a non-parametric method, it is often successful in classification situations where the decision boundary is very irregular. The optimal choice for the k-factor depends on the data. In general a larger k suppresses the effects of noise, but makes the classification boundaries less distinct. There are different methods to find the nearest neighbor. The algorithms used are are brute force, K-D Tree or Ball Tree.The optimal choice of algorithm depends on multiple factors: number of samples and dimensionality D, Data Structure, number of neighbours requested  and number of query points
-
-	
+	K-Nearest Neighbors (KNN) based classification is a type of instance-based learning or non-generalizing learning. The algorithm does not attempt to construct an internal model but instead stores training data instances. It then classifies the new point by a majority vote of the k-nearest neighbours. The optimal choice for the k-factor depends on the data itself. In general, a larger k suppresses noise but makes the classification boundaries less distinct. Since KNN relies on the distance to classify, the data was normalized beforehand. Normalization was chosen over standardization since the algorithm parameters p were left at its default = 2 and the metric, which is 'minkowski'. This is equivalent to the standard Euclidean metric. The ideal parameters were found to achieve the highest accuracy by using the GridSearch() function and 5-fold cross-validation. A Grid from 1-30 for the k-value was created, and different leaf\_sizes, algorithms and weights were checked. The highest precision was found with a k-neighbor size of 21, algorithm = 'auto', leaf\_size = 10, weights = 'distance'. The leaf\_size is passed to the algorithms BallTree or KDTree. This can affect the speed of the construction and the memory, which is required to store the tree. The weights were selected as 'distance', which means that closer neighbours of a query point will have a greater influence than further away neighbours.
+		
 	% Logistic Regression
 	\subsection{Logistic Regression}
-	\textcolor{red}{I honestly don't understand shit. the l1, l2 is confusing}
-	\medbreak
-	Logistic regression is a linear model used for classification. The probabilities describing the possible outcomes of a single trial are modeled by a logistic function. This implementation can fit binary, One-vs-Rest, or multinomial logistic regression with optional l1 and l2 or Elastic-Net regularization. The regularization l1 and l2 both solve optimization problems. Whereas the Elastic-Net is a combination of both. An advantage of regularization is that it improves numerical stability. No regularization amounts to setting C to a very high value
-
+	Logistic regression (LR) is one of the most used machine learning algorithms for binary classification problems. LR is a linear method, but the predictions are transformed using the logistic(sigmoid) function. An optional L1, L2 or Elastic-Net regularization can be applied. It is also commonly referred to as a penalized logistic regression. Using a penalty is favourable as they solve optimization problems to achieve a good result and improve numerical stability. The Elastic-Net is a combination of both L1 and L2.  No regularization amounts to setting C to a very high value. C is the inverse of regularization strength. Hence smaller values specify stronger regularization.
+	To achieve the highest accuracy and find the optimal parameters/hyperparameters for the LR algorithm, a randomized search approach with 5-fold cross-validation was used. The randomized search approach was used. Furthermore, a comparison between standardized scaled and unscaled data was made. The scaled data consistently achieved a higher accuracy of roughly 1\% compared to the unscaled data. The highest accuracy was found using the L1 penalty with the 'saga' solver. The found C value with random search lies at 0.33. This indicates a strong regularization. Since all classes should have equal weight, the weight\_class parameter was kept at the default value 'balanced'. It is essential to state that the retrieved parameters can change with each code compilation since a random search was used.
 	
 	% Naïve Bayes
 	\subsection{Naïve Bayes}
@@ -259,11 +255,11 @@
 %	\end{figure}
 	
 	\subsection{Cross Validation}
-	All machine learning algorithms must first be trained and then tested with a data set afterwards. Since the same data set is used to train and test the models, we applied the cross-validation technique to resample the data accordingly. This means that different portions of the data are used to train and then test the models with each iteration. We used fivefold cross-validation for our algorithms. The principle of data resampling can be seen in Figure \ref{fig:crossValidation}. We chose five as more iterations only slow down the overall code speed and does not significantly impact the results.
+	The dataset needs to be split into a test dataset and a training dataset to train and test the machine learning models. In our case, the test dataset is 25\% of the entire dataset. We use the training dataset to fit the machine learning model and the test dataset to evaluate the machine learning model. We applied the cross-validation technique to resample the data accordingly. This means that different portions of the data are used to train and then evaluate the models with each iteration. We used fivefold cross-validation for our algorithms. The principle of data resampling can be seen in Figure \ref{fig:crossValidation}. We chose five as more iterations only slow down the overall code speed and does not significantly impact the results.
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.5\textwidth]{img/grid_search_cross_validation.png}
-		\caption{Fivefold Cross Validation to resample the dataset \cite{scikit}}
+		\caption{Fivefold Cross Validation \cite{scikit}}
 		\label{fig:crossValidation}
 	\end{figure}
 	\subsection{Tuning Algorithms}
@@ -368,7 +364,7 @@
 				\node[squarednode2](step1)[below=of step0]{Replace missing values with "NaN"};
 				\node[squarednode2](step2)[below=of step1]{Visualize the distribution of data for all variables};
 				\node[squarednode2](step3)[below=of step2]{Clean data by replacing NaN with Mean or Median};
-				\node[squarednode2](step4)[below=of step3]{Re-visualize the distribution of data for all variables};
+				\node[squarednode2](step4)[below=of step3]{Data Scaling / Feature Scaling};
 				
 				%Lines
 				
@@ -411,16 +407,15 @@
 		\caption{Amount of zero values in dataset}
 		\label{tab:nullValues}
 	\end{table}
-	\subsubsection{Dataset Splitting}
-	The dataset needs to be split into a test dataset and a training dataset to train and test the machine learning models. In our case, the test dataset is 25\% of the entire dataset. We use the training dataset to fit the machine learning model and the test dataset to evaluate the machine learning model.  When we split a dataset, there are two competing concerns. Our parameter estimates have more significant variance if we have less training data, and our performance statistics will have more significant variance if we have less testing data. Therefore the 25\% is an excellent choice and the default in scikit-learn library. 
-	\medbreak
-	Both sets will be further split into an x-set and a y-set, where the y-set contains the outcome, if a person has diabetes or not (True or False), the x set contains all measured patient data. If the model is fitted with the training set, the test set will evaluate the model performance.
-	% Data Scaling / Feature Scaling
-%	\subsubsection{Data Scaling / Feature Scaling}
-%	\hl{To basic I gues remove it? we have to many pages}
-%	Data scaling or feature scaling is used in some machine learning algorithms. If there is a vast difference between numbers sizes, the model could assume that bigger numbers are more significant than smaller ones. Therefore all values are normalized or standardized.
+%	\subsubsection{Dataset Splitting}
+%	The dataset needs to be split into a test dataset and a training dataset to train and test the machine learning models. In our case, the test dataset is 25\% of the entire dataset. We use the training dataset to fit the machine learning model and the test dataset to evaluate the machine learning model.  When we split a dataset, there are two competing concerns. Our parameter estimates have more significant variance if we have less training data, and our performance statistics will have more significant variance if we have less testing data. Therefore the 25\% is an excellent choice and the default in scikit-learn library. 
 %	\medbreak
-%	In our case, data scaling was used for the SGD, SVMs and KNN algorithms, in all cases, the scaled data had better accuracy than the non-scaled data. Data scaling also helps some models (for example, SGD) with the training time, significantly improving the converge time.
+%	Both sets will be further split into an x-set and a y-set, where the y-set contains the outcome, if a person has diabetes or not (True or False), the x set contains all measured patient data. If the model is fitted with the training set, the test set will evaluate the model performance.
+	% Data Scaling / Feature Scaling
+	\subsubsection{Data Scaling / Feature Scaling}
+	Data scaling or feature scaling is used in some machine learning algorithms. If there is a vast difference between numbers sizes, the model could assume that bigger numbers are more significant than smaller ones. Therefore all values are normalized or standardized.
+	\medbreak
+	In our case, data scaling was used for the LR, SGD, SVMs and KNN algorithms, in all cases, the scaled data had better accuracy than the non-scaled data. Data scaling also helps some models (for example, SGD) with the training time, significantly improving the converge time.
 	
 	% Imbalanced Data
  	\subsubsection{Imbalanced Data}

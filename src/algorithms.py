@@ -13,14 +13,13 @@ from sklearn.neighbors import KNeighborsClassifier  # K Nearest Neighbors
 from sklearn.svm import SVC  # Support Vector Machines
 from sklearn.naive_bayes import GaussianNB  # Naive Bayes
 from sklearn.tree import DecisionTreeClassifier  # Decision Tree
-from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 from sklearn.model_selection import cross_val_score, cross_val_predict, GridSearchCV, RandomizedSearchCV
 
 warnings.filterwarnings("ignore")
 
 
-def calculateStochasticGradientDescent(x_train, x_test, y_train, y_test):
+def calculateStochasticGradientDescent(x_train, x_train_scaled, x_test, x_test_scaled, y_train, y_test):
     # Test Parameters to evaluate
     testParameters = [{
         "loss": ['hinge', 'log', 'modified_huber', 'squared_hinge', 'perceptron', 'squared_error', 'huber',
@@ -30,10 +29,7 @@ def calculateStochasticGradientDescent(x_train, x_test, y_train, y_test):
     }]
     best_parameters = []
     best_score = []
-    # Scaling data
-    Std_scaler = StandardScaler()
-    x_train_scaled = Std_scaler.fit_transform(x_train)
-    x_test_scaled = Std_scaler.fit_transform(x_test)
+
     print("Stochastic Gradient Descent GridSeacrh on scaled an unscaled dataset")
     for trainingSet in [x_train_scaled, x_train]:
         sgd = SGDClassifier(random_state=True)
@@ -74,7 +70,7 @@ def calculateStochasticGradientDescent(x_train, x_test, y_train, y_test):
     return getCompareParameters("Stochastic Gradient Descent", y_test, y_predict, accuracyScores, f1Scores)
 
 
-def calculateSupportVectorMachines(x_train, x_test, y_train, y_test):
+def calculateSupportVectorMachines(x_train, x_train_scaled, x_test, x_test_scaled, y_train, y_test):
     # Test Parameters to evaluate
     testParameters = [
         {"kernel": ["linear"], "C": [0.9, 1, 2, 10], "class_weight": ['balanced']},
@@ -86,10 +82,7 @@ def calculateSupportVectorMachines(x_train, x_test, y_train, y_test):
     ]
     best_parameters = []
     best_score = []
-    # Scaling data
-    Std_scaler = StandardScaler()
-    x_train_scaled = Std_scaler.fit_transform(x_train)
-    x_test_scaled = Std_scaler.fit_transform(x_test)
+
     print("Support Vector Machines GridSearch on scaled an unscaled dataset")
     for trainingSet in [x_train_scaled, x_train]:
         # Set the parameters by cross-validation
@@ -131,7 +124,10 @@ def calculateSupportVectorMachines(x_train, x_test, y_train, y_test):
     return getCompareParameters("Support Vector Machines", y_test, y_predict, accuracyScores, f1Scores)
 
 
-def calculateNaiveBayes(x_train, x_test, y_train, y_test):
+def calculateNaiveBayes(x_train, x_train_scaled, x_test, x_test_scaled, y_train, y_test):
+    # delete unused arguments
+    del x_train_scaled, x_test_scaled
+
     model = GaussianNB()
     model.fit(x_train, y_train)
     y_predict = model.predict(x_test)
@@ -145,7 +141,10 @@ def calculateNaiveBayes(x_train, x_test, y_train, y_test):
     return getCompareParameters("Naive Bayes", y_test, y_predict, accuracyScores, f1Scores)
 
 
-def calculateDecisionTrees(x_train, x_test, y_train, y_test):
+def calculateDecisionTrees(x_train, x_train_scaled, x_test, x_test_scaled, y_train, y_test):
+    # delete unused arguments
+    del x_train_scaled, x_test_scaled
+
     # Test Parameters to evaluate
     testParameters = [
         {"criterion": ['gini', 'entropy'], "splitter": ['best', 'random'],
@@ -170,36 +169,32 @@ def calculateDecisionTrees(x_train, x_test, y_train, y_test):
     return getCompareParameters("Decision Trees", y_test, y_predict, accuracyScores, f1Scores)
 
 
-def calculateLogisticRegression(x_train, x_test, y_train, y_test):
+def calculateLogisticRegression(x_train, x_train_scaled, x_test, x_test_scaled, y_train, y_test):
     # variables
     uni_points = 30
     best_parameters = []
     best_score = []
-    # Scaling data
-    Std_scaler = StandardScaler()
-    x_train_scaled = Std_scaler.fit_transform(x_train)
-    x_test_scaled = Std_scaler.fit_transform(x_test)
+    c_values = np.random.uniform(0, 4, uni_points)
 
     # Test Parameters to evaluate
     testParameters = [
-        {"solver": ['liblinear'], "penalty": ['l1', 'l2'], "C": np.random.uniform(0, 4, uni_points),
-         "max_iter": [1000], "multi_class": ['ovr', 'auto', 'multinomial']},
-        {"solver": ['lbfgs'], "penalty": ['none', 'l2'], "C": np.random.uniform(0, 4, uni_points),
-         "max_iter": [1000], "multi_class": ['ovr', 'auto', 'multinomial']},
-        {"solver": ['newton-cg'], "penalty": ['none', 'l2'], "C": np.random.uniform(0, 4, uni_points),
-         "max_iter": [1000], "multi_class": ['ovr', 'auto', 'multinomial']},
-        {"solver": ['sag'], "penalty": ['none', 'l2'], "C": np.random.uniform(0, 4, uni_points),
-         "max_iter": [1000], "multi_class": ['ovr', 'auto', 'multinomial']},
-        {"solver": ['saga'], "penalty": ['l1', 'l2', 'none'], "C": np.random.uniform(0, 4, uni_points),
-         "max_iter": [1000], "multi_class": ['ovr', 'auto', 'multinomial']}
+        {"solver": ['liblinear'], "penalty": ['l1', 'l2'], "C": c_values,
+         "max_iter": [1000], "multi_class": ['ovr']},
+        {"solver": ['lbfgs'], "penalty": ['none', 'l2'], "C": c_values,
+         "max_iter": [1000], "multi_class": ['ovr']},
+        {"solver": ['newton-cg'], "penalty": ['none', 'l2'], "C": c_values,
+         "max_iter": [1000], "multi_class": ['ovr']},
+        {"solver": ['sag'], "penalty": ['none', 'l2'], "C": c_values,
+         "max_iter": [1000], "multi_class": ['ovr']},
+        {"solver": ['saga'], "penalty": ['l1', 'l2', 'none'], "C": c_values,
+         "max_iter": [1000], "multi_class": ['ovr']}
     ]
 
     for trainingSet in [x_train_scaled, x_train]:
         model_LR = LogisticRegression()
         # 5-fold cross validation randomized search with 1000 iterations
         SearchCV_Output = RandomizedSearchCV(model_LR, testParameters, random_state=gl.randomState, n_iter=1000,
-                                             cv=gl.cv,
-                                             verbose=gl.verboselevel, n_jobs=-1)
+                                             cv=gl.cv, verbose=gl.verboselevel, n_jobs=-1)
         # Fit randomized search
         SearchCV_Output.fit(trainingSet, y_train)
 
@@ -236,18 +231,14 @@ def calculateLogisticRegression(x_train, x_test, y_train, y_test):
     return getCompareParameters("Logistic Regression", y_test, y_predict, accuracyScores, f1Scores)
 
 
-def calculateKNearestNeighbors(x_train, x_test, y_train, y_test):
+def calculateKNearestNeighbors(x_train, x_train_scaled, x_test, x_test_scaled, y_train, y_test):
+    # delete unused arguments
+    del x_train_scaled, x_test_scaled
+
     # variables
     k_range = 30
     best_parameters = []
     best_score = []
-
-    # Scaling data
-    Std_scaler = StandardScaler()
-    x_train_scaled = pd.DataFrame(Std_scaler.fit_transform(x_train))
-    # overwrite scaled data by also normalizing it
-    x_train_scaled = preprocessing.normalize(x_train_scaled)
-    x_test_scaled = pd.DataFrame(Std_scaler.fit_transform(x_test))
 
     # Test different hyper-parameters to evaluate best constelation
     eval_parameters = [
@@ -255,6 +246,9 @@ def calculateKNearestNeighbors(x_train, x_test, y_train, y_test):
          "leaf_size": [10, 20, 30, 40, 50],
          "weights": ['uniform', 'distance']}
     ]
+    # Here we want to have normilized training sets
+    x_train_scaled = preprocessing.normalize(x_train)
+    x_test_scaled = preprocessing.normalize(x_test)
     for trainingSet in [x_train_scaled, x_train]:
         model_KNN = KNeighborsClassifier()
         # Create randomized search 5-fold cross validation
